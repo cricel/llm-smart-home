@@ -47,9 +47,9 @@ class LLMCore:
             os.environ["OPENAI_API_KEY"] = "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"
             self.llm_base = ChatOpenAI(model_name="gpt-4-vision-preview", max_tokens=1024)
         elif(llm_server == "ollama"):
-            self.llm_base = Ollama(base_url="http://131.123.41.132:11434", model="llama3:70b")
+            self.llm_base = Ollama(base_url="http://131.123.41.132:11434", model="llama3:8b")
         else:
-            self.llm_base = Ollama(base_url="http://131.123.41.132:11434", model="llama3:70b")
+            self.llm_base = Ollama(base_url="http://131.123.41.132:11434", model="llama3:8b")
 
     def init_llm_db(self):
         conn_info = "postgresql://postgres:qwepoi123@localhost:5432/llm-smart-home"
@@ -68,7 +68,7 @@ class LLMCore:
         )
 
     def init_llm_document_loader(self):
-        loader = TextLoader("./data/raw_conversion.txt")
+        loader = TextLoader("../../resources/test/conversions/raw_conversion.txt")
         documents = loader.load()
         text_splitter = RecursiveCharacterTextSplitter()
         docs = text_splitter.split_documents(documents)

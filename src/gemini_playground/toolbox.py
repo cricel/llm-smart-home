@@ -1,5 +1,5 @@
 ##############################################
-# This file is use for all the actual device functions that will be used
+# This file contain all the actual executable functions that will be used
 ##############################################
 from db_connector import DBConnector
 
