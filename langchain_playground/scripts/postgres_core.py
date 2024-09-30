@@ -10,7 +10,7 @@ class PostgresCore:
             host = "localhost",
             database = "mechllm",
             user = "postgres",
-            password = "qwepoi123",
+            password = "admin",
             port = 5432
         )
 

@@ -1,4 +1,4 @@
-IS_ROS_ENABLE = False
+IS_ROS_ENABLE = True
 if(IS_ROS_ENABLE):
     try:
         import rclpy
@@ -431,14 +431,21 @@ class VisionCore:
 
 
     def image_context_analyzer(self, _frame):
-        base64_image = utilities_core.opencv_frame_to_base64(_frame)
+        rgb_image = cv2.cvtColor(_frame, cv2.COLOR_BGR2RGB)
+        base64_image = utilities_core.opencv_frame_to_base64(rgb_image)
         image_url = f"data:image/jpeg;base64,{base64_image}"
 
         # tag = {"filename": "test"}
         tag = {"filename": self.video_filename}
 
-        question = "analysis this image, and give me a detail break down of list of objects in the image"
-
+        question =  """Analyze the image and provide a detailed breakdown of the objects present.
+                    For each object, include the following information:
+                    - Name of the object
+                    - Bounding box coordinates (top-left and bottom-right)
+                    - Key features such as color, texture, material, and any observable state (e.g., stationary, moving)
+                    - Location in relation to other objects or the environment
+                    - Any interaction or state changes detected
+                    """
         json_schema = {
             "title": "image_analysis",
             "description": "give a detail analysis of what happen in the image",
