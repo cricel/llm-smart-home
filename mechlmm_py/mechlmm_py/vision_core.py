@@ -106,7 +106,15 @@ class VisionCore:
         # tag = {"filename": "test"}
         tag = {"filename": self.current_video_filename}
 
-        question = "analysis this image, and give me a detail break down of list of objects in the image"
+        question = """
+                    Analyze the image and provide a detailed breakdown of the objects present.
+                    For each object, include the following information:
+                    - Name of the object
+                    - Bounding box coordinates (top-left and bottom-right)
+                    - Key features such as color, texture, material, and any observable state (e.g., stationary, moving)
+                    - Location in relation to other objects or the environment
+                    - Any interaction or state changes detected
+                    """
 
         json_schema = {
             "title": "image_analysis",
@@ -179,13 +187,14 @@ class VisionCore:
             self.debug_core.log_info(_current_features)
 
             features_summary, _ = self.mechlmm_core.chat_text(f"""
-                                        Merge the items with similar meanings from the provided lists below. 
-                                        Format the final output as one single list as [feature1, feature2, feature3]. 
-                                        Only return the JSON array of features, no need for the reasoning or any additional content.
-
-                                        {_db_features + _current_features}
-                                        """)
-            
+                                                                Merge items with similar meanings from the provided lists below. 
+                                                                Consider features with synonymous or overlapping meanings as duplicates and merge them. 
+                                                                Remove any redundant entries to ensure that each feature in 
+                                                                the final list is unique and represents distinct information.
+                                                                {_db_features + _current_features}
+                                                                """
+                                                                )
+                                                                            
             self.debug_core.log_key("------ features mege output from llm ------")
             self.debug_core.log_key(features_summary)
             

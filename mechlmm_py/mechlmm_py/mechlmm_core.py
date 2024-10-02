@@ -11,6 +11,7 @@ from .postgres_core import PostgresCore
 from . import lmm_function_pool
 from . import utilities_core
 
+
 class MechLMMCore:
     def __init__(self, data_path = "../output"):
         self.ollama_model = ChatOllama(

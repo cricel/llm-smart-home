@@ -8,7 +8,7 @@ class PostgresCore:
     def init_db(self, _reset):
         self.db_conn = psycopg2.connect(
             host = "localhost",
-            database = "mechlmm",
+            database = "mechllm",
             user = os.getenv('POSTGRESQL_USER'),
             password = os.getenv('POSTGRESQL_PASSWORD'),
             port = 5432

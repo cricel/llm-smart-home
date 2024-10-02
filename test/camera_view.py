@@ -14,7 +14,7 @@ class CameraView:
         self.debug_core = DebugCore()
         self.debug_core.verbose = 3
 
-        self.cam = cv2.VideoCapture(1)
+        self.cam = cv2.VideoCapture(0)
 
         self.lmm_result = None
 
