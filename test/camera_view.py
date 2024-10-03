@@ -4,6 +4,7 @@ from mechlmm_py import VisionCore, DebugCore
 
 import threading
 import time
+import random
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -26,6 +27,37 @@ class CameraView:
         self.processing_thread.daemon = True
         self.processing_thread.start()
 
+    def draw_bounding_boxes(slef, frame, objects):
+        # Predefined list of colors (you can extend this if needed)
+        color_list = [
+            (255, 0, 0),  # Red
+            (0, 255, 0),  # Green
+            (0, 0, 255),  # Blue
+            (255, 255, 0),  # Cyan
+            (255, 0, 255),  # Magenta
+            (0, 255, 255)   # Yellow
+        ]
+
+        # Iterate over all detected objects
+        for idx, obj in enumerate(objects):
+            temp_bounding_box = obj["position"]
+            object_name = obj["name"]
+
+            # Choose a color for the bounding box. Cycle through the predefined colors or generate random ones.
+            color = color_list[idx % len(color_list)]  # Cycle through the predefined colors
+
+            # Draw the object's name
+            cv2.putText(frame, object_name, (temp_bounding_box[0] + 10, temp_bounding_box[1] + 30), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+
+            # Draw the bounding box
+            cv2.rectangle(frame, 
+                        (temp_bounding_box[0], temp_bounding_box[1]), 
+                        (temp_bounding_box[2], temp_bounding_box[3]), 
+                        color, 2)
+
+        return frame
+
     def run(self):
         while True:
             ret, frame = self.cam.read()
@@ -39,11 +71,17 @@ class CameraView:
             with self.lock:
                 self.latest_frame = frame.copy()
 
+            # if(self.lmm_result):
+            #     temp_bounding_box = self.lmm_result["objects"][0]["position"]
+            #     cv2.putText(frame, self.lmm_result["objects"][0]["name"], (temp_bounding_box[0] + 10, temp_bounding_box[1] + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
+            #     cv2.rectangle(frame, (temp_bounding_box[0], temp_bounding_box[1]), (temp_bounding_box[2], temp_bounding_box[3]), (255, 0, 0), 2)
+            # cv2.imshow('Live Camera', frame)
+
+            # Inside your main loop where you're processing the video feed
             if(self.lmm_result):
-                temp_bounding_box = self.lmm_result["objects"][0]["position"]
-                cv2.putText(frame, self.lmm_result["objects"][0]["name"], (temp_bounding_box[0] + 10, temp_bounding_box[1] + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
-                cv2.rectangle(frame, (temp_bounding_box[0], temp_bounding_box[1]), (temp_bounding_box[2], temp_bounding_box[3]), (255, 0, 0), 2)
+                frame = self.draw_bounding_boxes(frame, self.lmm_result["objects"])
             cv2.imshow('Live Camera', frame)
+
 
             if cv2.waitKey(1) == ord('q'):
                 break

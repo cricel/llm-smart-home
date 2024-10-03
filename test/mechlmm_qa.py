@@ -16,4 +16,4 @@ if __name__ == '__main__':
             print("Exiting...")
             break
         else:
-            mechlmm_core.chat_text(user_input)
+            mechlmm_core.chat_text_knowledge(user_input)

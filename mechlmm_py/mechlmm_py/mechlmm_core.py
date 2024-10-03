@@ -40,46 +40,57 @@ class MechLMMCore:
     
     def chat_text_knowledge(self, _question):
         self.debug_core.log_info("------ chat_text_knowledge ------")
+        
         db_item_list = self.postgres_core.get_objects_map_name_list_db()
         db_video_list = self.postgres_core.get_video_summary_list_db()
 
-        # print(db_video_list)
-        # print(db_item_list)
-        # time_data = [1726895700, 1726895703]
-        # matching_video = self.find_video_in_range(db_video_list, time_data)
-        # print(matching_video)
+        # Step 1: Ask the LLM to rephrase or simplify the question if needed
+        simplified_question, _ = self.chat_text(f"""
+                                        Simplify or rephrase the following question to make it clearer or easier to understand:
+                                        {_question}
 
+                                        Only return the simplified or rephrased question as a string. No additional reasoning or content is required.
+                                        """
+                                        )
+        
+        self.debug_core.log_info(f"------ Simplified Question: {simplified_question} ------")
 
+        # Step 2: Use the simplified question to find matching items from the database
         results, _ = self.chat_text(f"""
-                                    Dont answer the question, just parser the following question and find the list of similar items in the list provided: 
-                                    {_question}
-                                
-                                    {db_item_list}
+                                        Don't answer the question, just parse the following simplified question and find the list of similar items in the list provided:
+                                        {simplified_question}
+                                        
+                                        {db_item_list}
 
-                                    return the exact name of the matching item in provided list as array, if none found, return None
-                                    Only return the JSON array, no need for the reasoning or any additional content.
-                                    
-                                    """
-                                    )
+                                        Return the exact name of the matching item in the provided list as an array. If none found, return None.
+                                        Only return the JSON array, no need for any reasoning or additional content.
+                                        """
+                                        )
         
         self.debug_core.log_info("------ find target object in db ------")
         self.debug_core.log_info(results)
+        
         output_results = utilities_core.llm_output_list_cleaner(results)
 
         video_list = []
         object_db_list = []
+
+        # Process the results from the LLM
         for result in output_results:
             _record_result = self.postgres_core.get_objects_map_record_by_name_db(result)
             object_db_list.append(_record_result)
+            
             self.debug_core.log_key("---++++++----")
             self.debug_core.log_key(result)
             self.debug_core.log_key(_record_result)
+            
             for video_time in _record_result["reference_videos"]:
                 matching_video = self.find_video_in_range(db_video_list, video_time)
                 video_list = list(set(video_list + matching_video))
+                
                 self.debug_core.log_key("----------------------")
                 self.debug_core.log_key(video_list)
-        
+
         self.debug_core.log_info("------ list of video used ------")
         self.debug_core.log_info(video_list)
 
@@ -93,43 +104,43 @@ class MechLMMCore:
         self.debug_core.log_info(video_summary_list)
         self.debug_core.log_info(object_db_list)
 
+        # Step 3: Answer the question based on the object and video information
         results, _ = self.chat_text(f"""
-                                    given the information below, answer the question in summary if answer found, otherwise, simply return "None": "{_question}"
+                                        Given the information below, answer the question in summary if an answer is found, otherwise, simply return "None": "{_question}"
 
-                                    List of object Info:
-                                    {object_db_list}
-                                    List of context info:
-                                    {video_summary_list}
-                                    """
-                                    )
+                                        List of object Info:
+                                        {object_db_list}
+                                        List of context info:
+                                        {video_summary_list}
+                                        """
+                                        )
         
         self.debug_core.log_key("------ chat_text_knowledge result ------")
         self.debug_core.log_info(results)
 
-        # mechllm_core.chat_video("../output/videos/output_video_1727316267.mp4", "what color is the desk")
         video_detail_summary_list = []
-        # print(type(results))
+
+        # If the result is None, we analyze video details further
         if(results == "None"):
             for video in video_list:
                 video_detail_summary_list.append(self.chat_video("../output/videos/" + video, _question))
 
-        
             results, _ = self.chat_text(f"""
-                                        given the information below, answer the question in summary: "{_question}"
+                                            Given the information below, answer the question in summary: "{_question}"
 
-                                        Detail context analyze:
-                                        {video_detail_summary_list}
-                                        List of context info:
-                                        {object_db_list}
-                                        {video_summary_list}
-                                        """
-                                        )
+                                            Detailed context analysis:
+                                            {video_detail_summary_list}
+                                            List of context info:
+                                            {object_db_list}
+                                            {video_summary_list}
+                                            """
+                                            )
             
-            self.debug_core.log_key("------ 2222 chat_text_knowledge result ------")
+            self.debug_core.log_key("------ Detailed chat_text_knowledge result ------")
             self.debug_core.log_info(results)
-        
 
         return results
+
 
 
     
