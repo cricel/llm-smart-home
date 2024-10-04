@@ -79,3 +79,9 @@ python vision_core.py
 https://drive.google.com/drive/folders/1HYZvlaUuVLhMtZj_cshzsnftiEZ1T-9k?usp=drive_link
 ### Overleaf account
 ```coming soon```
+
+
+### Geminai 
+Return bounding boxes as JSON arrays [ymin, xmin, ymax, xmax]
+python test\geminai.py test.jpg "Return bounding boxes for each object as JSON arrays [ymin, xmin, ymax, xmax]" --model gemini-1.5-pro
+python test\openai_vision.py test.jpg "Return bounding boxes for each object as JSON arrays [ymin, xmin, ymax, xmax]"
