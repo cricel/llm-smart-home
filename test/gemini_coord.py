@@ -25,8 +25,7 @@ class Coord:
             matches = re.findall(regex, text)
             return [json.loads(match) for match in matches]
     
-    def display_image_with_bounding_boxes(image_path, coordinates):
-        img = cv2.imread(image_path)
+    def display_image_with_bounding_boxes(img, coordinates):
 
         colors = [(0, 0, 255), (0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 0, 255), (255, 255, 0)]
         
