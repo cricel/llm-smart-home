@@ -83,7 +83,7 @@ def main():
     parser = argparse.ArgumentParser(description="Process image and prompt using OpenAI API")
     parser.add_argument("image_path", help="Path to the input image")
     parser.add_argument("prompt", help="Prompt for the OpenAI API")
-    parser.add_argument("--model", default="gpt-4o-mini", help="Model name (default: gpt-4o-mini)")
+    parser.add_argument("--model", default="gpt-4o", help="Model name (default: gpt-4o-mini)")
     args = parser.parse_args()
 
     api_key = get_api_key()

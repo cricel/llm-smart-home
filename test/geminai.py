@@ -18,16 +18,16 @@ def get_api_key():
         os.environ["GEMINI_API_KEY"] = api_key
     return api_key
 
-def resize_and_compress_image(file_path, max_width=1000):
-    with Image.open(file_path) as img:
-        if img.width > max_width:
-            ratio = max_width / img.width
-            new_size = (max_width, int(img.height * ratio))
-            img = img.resize(new_size, Image.LANCZOS)
+# def resize_and_compress_image(file_path, max_width=1000):
+#     with Image.open(file_path) as img:
+#         if img.width > max_width:
+#             ratio = max_width / img.width
+#             new_size = (max_width, int(img.height * ratio))
+#             img = img.resize(new_size, Image.LANCZOS)
         
-        buffer = io.BytesIO()
-        img.save(buffer, format="JPEG", quality=70)
-        return buffer.getvalue()
+#         buffer = io.BytesIO()
+#         img.save(buffer, format="JPEG", quality=70)
+#         return buffer.getvalue()
 
 def file_to_generative_part(file_path):
     with open(file_path, "rb") as image_file:
