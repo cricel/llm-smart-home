@@ -75,23 +75,23 @@ def extract_coordinates(text):
         return [json.loads(match) for match in matches]
 
 # def display_image_with_bounding_boxes(image_path, coordinates):
-#     img = Image.open(image_path)
-#     fig, ax = plt.subplots(1)
-#     ax.imshow(img)
+    # img = Image.open(image_path)
+    # fig, ax = plt.subplots(1)
+    # ax.imshow(img)
 
-#     colors = ['r', 'g', 'b', 'y', 'm', 'c']
-#     for i, box in enumerate(coordinates):
-#         ymin, xmin, ymax, xmax = [coord / 1000 for coord in box]
-#         width = xmax - xmin
-#         height = ymax - ymin
-#         rect = Rectangle((xmin * img.width, ymin * img.height), width * img.width, height * img.height,
-#                          linewidth=2, edgecolor=colors[i % len(colors)], facecolor='none')
-#         ax.add_patch(rect)
+    # colors = ['r', 'g', 'b', 'y', 'm', 'c']
+    # for i, box in enumerate(coordinates):
+    #     ymin, xmin, ymax, xmax = [coord / 1000 for coord in box]
+    #     width = xmax - xmin
+    #     height = ymax - ymin
+    #     rect = Rectangle((xmin * img.width, ymin * img.height), width * img.width, height * img.height,
+    #                      linewidth=2, edgecolor=colors[i % len(colors)], facecolor='none')
+    #     ax.add_patch(rect)
 
-#     # plt.grid(True, color='r', linestyle='--', linewidth=0.5, alpha=0.5)
-#     plt.xticks(range(0, img.width + 1, 100))
-#     plt.yticks(range(0, img.height + 1, 100))
-#     plt.show()
+    # # plt.grid(True, color='r', linestyle='--', linewidth=0.5, alpha=0.5)
+    # plt.xticks(range(0, img.width + 1, 100))
+    # plt.yticks(range(0, img.height + 1, 100))
+    # plt.show()
 
 def display_image_with_bounding_boxes(image_path, coordinates):
     img = cv2.imread(image_path)
